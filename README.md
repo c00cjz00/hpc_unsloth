@@ -45,6 +45,8 @@ apptainer pull docker://nextboss/unsloth-dev
 ```
 
 2. 確認執行目錄是否正確。以下以 `hpc_unsloth` 為範例，設定專案所在目錄。
+
+若您使用T2, 以下部分可忽略, 不需要修改
 ```bash=
 # 建立虛擬專屬目錄
 myBasedir="/work/$(whoami)/github/hpc_unsloth"
