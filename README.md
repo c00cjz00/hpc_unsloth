@@ -58,6 +58,8 @@ mkdir -p ${myBasedir}/${myHome}
 
 打開範例檔案 `notebook/llama-3.2-1B-it.py` 進行編輯。
 
+若您第一次執行, 可以直接使用以下範例, 無需修改以下任何內容
+
 1. 編修項目一：若你的資源不足，可以調整 `max_seq_length` 大小：
 ```bash=
 max_seq_length = 8192 # Choose any! We auto support RoPE Scaling internally!
