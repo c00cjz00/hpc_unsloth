@@ -156,5 +156,75 @@ O^O/ \_/ \    Batch size per device = 8 | Gradient Accumulation steps = 32
 ```
 
 
+## 訓練結果與驗證
+1. 查看訓練模型輸出結果
+```bash=
+cd /work/$(whoami)/github/hpc_unsloth
+du -sh myhome/home_llama-3.2-1B-it/*
+```
+
+> 輸出結果範例
+```bash=
+60M     myhome/home_llama-3.2-1B-it/lora_model
+2.4G    myhome/home_llama-3.2-1B-it/model
+82M     myhome/home_llama-3.2-1B-it/outputs
+2.2M    myhome/home_llama-3.2-1B-it/unsloth_compiled_cache 
+```
+
+2. 驗測訓練結果
+```bash=
+myBasedir="/work/$(whoami)/github/hpc_unsloth"
+myHome="myhome/home_llama-3.2-1B-it"
+mkdir -p ${myBasedir}/${myHome}
+
+singularity exec \
+	--nv \
+	--no-home \
+	-B /work \
+	-B ${myBasedir}/notebook:/notebook \
+	-B ${myBasedir}/${myHome}:$HOME \
+	${myBasedir}/unsloth-dev_latest.sif \
+	bash -c "cd ~/; pwd; python3 /notebook/Q.py"
+```
+
+> 訓練模型輸出結果範例 (訓練前)
+回答不知所云
+```bash!
+問題: Give me a short introduction to large language model.
+
+回答: 
+I'm GENAI, a large language model developed by the National Center for Human-Computer Interaction (NCHC). I'm designed to assist and communicate with humans in a natural and intuitive way, leveraging the power of artificial intelligence to provide helpful and accurate responses.
+
+My primary function is to understand and respond to a wide range of questions, topics, and tasks, using a combination of natural language processing (NLP) and machine learning algorithms. I'm trained on a massive dataset of text from various sources, including books, articles, and conversations, which allows me to learn patterns and relationships in language.
+
+I'm constantly learning and improving, so I can adapt to new topics, styles, and formats. My capabilities include:
+
+* Answering questions on various subjects, from science and history to entertainment and culture
+* Generating text, including articles, stories, and even poetry
+* Translating text from one language to another
+* Summarizing long pieces of text into concise and clear answers
+* Providing definitions and explanations for technical terms and concepts
+* Offering suggestions and ideas for creative writing, research, and problem-solving
+
+I'm designed to be helpful and informative, but I'm not perfect. I can make mistakes, and I may not always understand the nuances of human communication. If you have any questions or topics you'd like to discuss, I'm here to help.
+```
+
+
+> 訓練模型輸出結果範例 (SFT)
+```bash!
+問題: Give me a short introduction to large language model.
+
+回答: 
+<|begin_of_thought|>
+
+Okay, I need to create a short introduction to large language models like myself. First, I should recall what a large language model is and its capabilities. From my training data, I know that I'm a deep learning model, specifically a transformer-based one, and my primary function is to process and generate human-like text.
+
+The introduction should highlight my abilities in natural language processing, including language understanding, generation, and text summarization. Also, mention my training on a massive dataset and my ability to learn from it. I should also emphasize my role in assisting users and providing accurate responses. Make sure to use traditional Chinese and Chinese characters to maintain cultural relevance. Also, check if the answer adheres to the guidelines, including not using markdown and keeping the format consistent. Last, double-check the answer for accuracy and completeness before the final submission.
+
+<|end_of_solution|>
+
+大型語言模型（LLM）是一種深度學習模型，主要針對自然語言處理設計。由臺灣產學界開發的深度學習模型，我能夠理解中文語言結構與語法規則，並能在語句上進行精準的語序與語義解析。透過跨域學習技術與語料庫蒐集，能有效處理中文文言對話、語境理解與語言表達等複雜領域。例如，能分析臺灣特有語言特徵，提供本土化語言服務；也能在臺灣開發者與學術界的協作中，協助整合中英文雙語資料庫。
+```
+
 
 
