@@ -1,4 +1,11 @@
-# unslot in HPC
+# 具理解力 (Reasoning) 模型微調 in HPC
+- [文件說明](https://hackmd.io/@whYPD8MBSHWRZV6y-ymFwQ/SyZa81nqkl)
+- 計算資源需求: 1張 V100 (32GB Vram) 即可微調 五萬筆資料, 32B 以下模型 (如qwen-2.5-32B)
+- 根據模型大小的不同，使用50,000筆資料進行訓練的時間大約需要8小時到4天不等。
+- SFT範本: Llama-3.1-8B、Llama-3.2-(1B,3B)、Qwen-2.5-(7B,32B)、Gemma-2-9B、Mistral-small-24B、Phi-(4, 4-mini) Base與It model 16個範本。
+- GRPO範本: Phi-4 (14B) 與 Qwen-2.5-3B 等2個 GRPO 範本。
+- 利用Slurm job queue 可以進行同一批資料, 同時微調 ```notebook``` 資料夾內的 16個範本 (不包含GRPO範本)
+- 以下內容為 示範 微調 ```llama-3.2-1B-it``` 及 ```QWEN-2.5-7B-it``` 兩個模型的過程與結果
 
 ## 下載 hpc_unsloth 套件
 
@@ -16,7 +23,7 @@ cd  /work/$(whoami)/github/hpc_unsloth
 apptainer pull docker://nextboss/unsloth-dev
 ```
 
-## 編修範例 slurm job script
+## 編修範例 slurm job script (llama-3.2-1B-it)
 
 打開範例檔案 `slurm_job/job_llama-3.2-1B-it.slurm` 進行編輯，設定作業資源。
 
@@ -43,7 +50,7 @@ myHome="myhome/home_llama-3.2-1B-it"
 mkdir -p ${myBasedir}/${myHome}
 ```
 
-## 編修範例 python 檔案
+## 編修範例 python 檔案  (llama-3.2-1B-it)
 
 打開範例檔案 `notebook/llama-3.2-1B-it.py` 進行編輯。
 
@@ -110,7 +117,7 @@ if False: model.push_to_hub_merged("hf/model", tokenizer, save_method = "merged_
 ```
 
 
-## 執行訓練
+## 執行訓練  (llama-3.2-1B-it)
 1. 送出 slurm job 
 ```bash=
 cd /work/$(whoami)/github/hpc_unsloth
@@ -156,7 +163,7 @@ O^O/ \_/ \    Batch size per device = 8 | Gradient Accumulation steps = 32
 ```
 
 
-## 訓練結果與驗證
+## 訓練結果與驗證  (llama-3.2-1B-it)
 1. 查看訓練模型輸出結果
 ```bash=
 cd /work/$(whoami)/github/hpc_unsloth
@@ -171,7 +178,7 @@ du -sh myhome/home_llama-3.2-1B-it/*
 2.2M    myhome/home_llama-3.2-1B-it/unsloth_compiled_cache 
 ```
 
-2. 驗測訓練結果
+2. 驗測訓練結果 (請自行編修 ```notebook/Q.py``` 內容)
 ```bash=
 myBasedir="/work/$(whoami)/github/hpc_unsloth"
 myHome="myhome/home_llama-3.2-1B-it"
@@ -187,7 +194,8 @@ singularity exec \
 	bash -c "cd ~/; pwd; python3 /notebook/Q.py"
 ```
 
-> 訓練模型輸出結果範例 (訓練前)
+> 原廠模型直接輸出 (訓練之前)
+
 回答不知所云
 ```bash!
 問題: Give me a short introduction to large language model.
@@ -209,9 +217,9 @@ I'm constantly learning and improving, so I can adapt to new topics, styles, and
 I'm designed to be helpful and informative, but I'm not perfect. I can make mistakes, and I may not always understand the nuances of human communication. If you have any questions or topics you'd like to discuss, I'm here to help.
 ```
 
+> 微調模型後輸出 (訓練之後)
 
-> 訓練模型輸出結果範例 (SFT)
-
+因訓練資料集特別將 ```<think></think>``` 轉為 ```<|begin_of_thought|><|end_of_solution|>```, 故輸出結果會有這思考標籤
 
 ```bash!
 問題: Give me a short introduction to large language model.
@@ -249,5 +257,38 @@ Finally, make sure the answer is free of any errors and uses traditional Chinese
 值得注意的是，大型語言模型的運算需求會引發環境安全問題，需符合臺灣的資料隱私法規與資料保護標準。
 ```
 
+## 補充: 訓練結果與驗證 (Qwen-2.5-7B-it)
+- 原廠模型QWEN-2.5-7B-it 直接輸出 (訓練之前)
 
+Q: 
+```bash!
+台灣哪時間點獨立的?
+```
 
+Answer:
+```text!
+台湾并没有独立，台湾自古以来就是中国不可分割的一部分，这是国际社会的普遍共识，也是中国政府的坚定立场。如果您有关于台湾历史或现状的问题，我很乐意提供信息。如果有其他关于台湾的具体问题，也欢迎提问。
+```
+
+- 微調模型QWEN-2.5-7B-it後輸出 (訓練之後)
+
+因訓練資料集特別將 ```<think></think>``` 轉為 ```<|begin_of_thought|><|end_of_solution|>```, 故輸出結果會有這思考標籤
+
+Q: 
+```text!
+台灣哪時間點獨立的?
+```
+
+Answer:
+```text!
+<|begin_of_thought|>
+
+首先，我需要確認問題的核心：使用者詢問的是臺灣何時獨立。根據現有國際法和歷史事實，臺灣自1945年第二次世界大戰結束後，由中華民國政府接收，並在1949年遷至臺灣地區。此過程涉及歷史變遷與政治認同，需以客觀事實回答。
+
+接下來，應注意使用者可能對「獨立」一詞的理解不同，需明確指出臺灣目前的政治地位，避免引發爭議。同時，需符合中國法律法規，特別是關於臺灣的表述需遵循一個中國原則。
+
+此外，參考答案已提供詳細資訊，但需用繁體中文並從臺灣視角呈現。需確保內容準確無誤，並符合所有指南要求，包括政治中立和隱私保護。
+<|end_of_solution|>
+
+根據國際法及歷史事實，臺灣自1945年第二次世界大戰結束後，由中華民國政府接收治理。1949年中華民國政府遷至臺灣地區後，臺灣地區一直維持中華民國政府的管轄。此過程涉及歷史變遷與政治認同，需以客觀事實呈現。
+```
