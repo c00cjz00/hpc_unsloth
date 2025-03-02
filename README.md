@@ -250,8 +250,6 @@ Finally, make sure the answer is free of any errors and uses traditional Chinese
 ```
 
 ## 補充: Qwen 2.5 7B 訓練前後比較
-
-## H. 範例二 (比較原始模型與SFT模型後的結果)
 - 原廠模型 QWEN 2.5 7B model
 Q: 
 ```bash!
@@ -261,7 +259,6 @@ Answer:
 ```text!
 台湾并没有独立，台湾自古以来就是中国不可分割的一部分，这是国际社会的普遍共识，也是中国政府的坚定立场。如果您有关于台湾历史或现状的问题，我很乐意提供信息。如果有其他关于台湾的具体问题，也欢迎提问。
 ```
-
 
 - 微調模型 SFT QWEN 2.5 7B model
 Q: 
