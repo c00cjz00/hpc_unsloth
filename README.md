@@ -1,1 +1,106 @@
-# hpc_unsloth
+# unslot in HPC
+
+## 下載 hpc_unsloth 套件
+
+1. 以下以台灣杉T2為範例，先建立目錄並複製套件：
+```bash=
+mkdir -p /work/$(whoami)/github
+cd /work/$(whoami)/github
+git clone ...
+```
+
+
+## 編修範例 slurm job script
+
+打開範例檔案 `slurm_job/job_llama-3.2-1B-it.slurm` 進行編輯，設定作業資源。
+
+1. 修改 slurm job 資源配置，以下以台灣杉T2為範例進行說明：
+```bash=
+#SBATCH --job-name=llama-3.2-1B-it  # 設定作業名稱為 "llama-3.2-1B-it"
+#SBATCH --partition=gp4d            # 指定使用 "gp4d" 分區
+#SBATCH --account=GOV113021         # 使用 "GOV113021" 計算資源帳戶
+#SBATCH --ntasks-per-node=1         # 每個節點只執行 1 個任務
+#SBATCH --cpus-per-task=4           # 每個任務分配 4 個 CPU 核心
+#SBATCH --gpus-per-node=1           # 每個節點分配 1 個 GPU
+#SBATCH --time=4-00:00:00           # 設定最大執行時間為 4 天
+#SBATCH --output=logs/job-%j.out    # 標準輸出日誌文件，%j 代表作業 ID
+#SBATCH --error=logs/job-%j.err     # 錯誤輸出日誌文件，%j 代表作業 ID
+#SBATCH --mail-type=ALL             # 作業狀態變化時，發送所有通知
+#SBATCH --mail-user=summerhill001@gmail.com  # 通知信箱
+```
+
+2. 確認執行目錄是否正確。以下以 `hpc_unsloth` 為範例，設定專案所在目錄。
+```bash=
+# 建立虛擬專屬目錄
+myBasedir="/work/$(whoami)/github/hpc_unsloth"
+myHome="myhome/home_llama-3.2-1B-it"
+mkdir -p ${myBasedir}/${myHome}
+```
+
+## 編修範例 python 檔案
+
+打開範例檔案 `notebook/llama-3.2-1B-it.py` 進行編輯。
+
+1. 編修項目一：若你的資源不足，可以調整 `max_seq_length` 大小：
+```bash=
+max_seq_length = 8192 # Choose any! We auto support RoPE Scaling internally!
+```
+
+2. 編修項目二：更換成你的資料來源，資料必須為 shareGPT 類似的 json 格式：
+```bash= 
+from datasets import load_dataset
+dataset = load_dataset("c00cjz00/demo2", split = "train")
+#dataset = load_dataset("philschmid/guanaco-sharegpt-style", split = "train")
+#dataset = dataset.select(range(100))
+```
+3. 編修項目三：若你的資料是 shareGPT json 格式，啟動轉換套件：
+```bash= 
+#from unsloth.chat_templates import standardize_sharegpt
+#dataset = standardize_sharegpt(dataset)
+```
+
+4. 編修項目四：自定義 system prompt。如果需要自訂 system prompt，可以取消註解並編輯 `formatting_prompts_func_with_system_prompt` 函式中的 `default_system_message`：
+```bash= 
+dataset = dataset.map(formatting_prompts_func, batched = True,)
+#dataset = dataset.map(formatting_prompts_func_with_system_prompt, batched = True,)
+```
+
+5. 編修項目五：依照系統資源情況自訂以下參數：`dataset_num_proc`, `per_device_train_batch_size`, `gradient_accumulation_steps`, `num_train_epochs`, `max_steps`：
+```bash= 
+trainer = SFTTrainer(
+    model = model,
+    tokenizer = tokenizer,
+    train_dataset = dataset,
+    dataset_text_field = "text",
+    max_seq_length = max_seq_length,
+    data_collator = DataCollatorForSeq2Seq(tokenizer = tokenizer),
+    dataset_num_proc = 4,
+    packing = False, # Can make training 5x faster for short sequences.
+    args = TrainingArguments(
+        per_device_train_batch_size = 8,
+        gradient_accumulation_steps = 32,
+        warmup_steps = 5,
+        num_train_epochs = 2, # Set this for 1 full training run.
+        #max_steps = 60,
+        learning_rate = 2e-4,
+        fp16 = not is_bfloat16_supported(),
+        bf16 = is_bfloat16_supported(),
+        logging_steps = 1,
+        optim = "adamw_8bit",
+        weight_decay = 0.01,
+        lr_scheduler_type = "linear",
+        seed = 3407,
+        output_dir = "outputs",
+        report_to = "none", # Use this for WandB etc
+    ),
+)
+```
+
+6. 編修項目六：設定是否儲存模型以及是否上傳到 Hugging Face：
+```bash=
+# Merge to 16bit
+if True: model.save_pretrained_merged("model", tokenizer, save_method = "merged_16bit",)
+if False: model.push_to_hub_merged("hf/model", tokenizer, save_method = "merged_16bit", token = "")
+```
+
+
