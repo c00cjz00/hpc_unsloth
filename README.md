@@ -6,9 +6,15 @@
 ```bash=
 mkdir -p /work/$(whoami)/github
 cd /work/$(whoami)/github
-git clone ...
+git clone https://github.com/c00cjz00/hpc_unsloth.git
 ```
 
+## 下載 unsloth image
+請確認檔案會存放為 /work/$(whoami)/github/hpc_unsloth/unsloth-dev_latest.sif 
+```bash=
+cd  /work/$(whoami)/github/hpc_unsloth
+singularity pull docker://nextboss/unsloth-dev
+```
 
 ## 編修範例 slurm job script
 
@@ -102,5 +108,25 @@ trainer = SFTTrainer(
 if True: model.save_pretrained_merged("model", tokenizer, save_method = "merged_16bit",)
 if False: model.push_to_hub_merged("hf/model", tokenizer, save_method = "merged_16bit", token = "")
 ```
+
+
+## 執行訓練
+1. 送出 slurm job 
+```bash=
+cd /work/$(whoami)/github/hpc_unsloth
+sbatch slurm_job/slurm_job/job_llama-3.2-1B-it.slurm
+``` 
+
+2. 確認所有 slurm job 運傳狀況
+```bash=
+bash hpc_cmd/squeue.sh
+``` 
+
+3. 確認運算細節, 請把下方 $JOBID 更換成上方指令輸出的 JOBID 代號
+```bash=
+tail -f logs/job-$JOBID.err
+tail -f logs/job-$JOBID.our
+```
+
 
 
