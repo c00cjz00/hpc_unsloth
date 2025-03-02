@@ -1,9 +1,11 @@
 # 具理解力 (Reasoning) 模型微調 in HPC
 - [文件說明](https://hackmd.io/@whYPD8MBSHWRZV6y-ymFwQ/SyZa81nqkl)
-- 利用slurm squeue, 一次可同時微調16個模型（如Llama、Qwen、Gemma、Mistral、Phi等base 與 it model）。
 - 計算資源需求: 1張 V100 (32GB Vram) 即可微調 五萬筆資料, 32B 以下模型 (如qwen-2.5-32B)
 - 根據模型大小的不同，使用50,000筆資料進行訓練的時間大約需要8小時到4天不等。
-  
+- 利用slurm squeue, 一次可同時微調多個模型
+- 範本: Llama-3.1-8B、Llama-3.2-(1B,3B)、Qwen-2.5-(7B,32B)、Gemma-2-9B、Mistral-small-23N、Phi-(4, 4-mini) 等Base 與 It model 共計16個範本。
+- 範本: Phi-4 (14B) 與 Qwen-2.5-3B 等2個 GRPO 範本。
+
 ## 下載 hpc_unsloth 套件
 
 1. 以下以台灣杉T2為範例，先建立目錄並複製套件：
