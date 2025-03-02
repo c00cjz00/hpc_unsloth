@@ -5,6 +5,7 @@
 - 利用slurm squeue, 一次可同時微調多個模型
 - 範本: Llama-3.1-8B、Llama-3.2-(1B,3B)、Qwen-2.5-(7B,32B)、Gemma-2-9B、Mistral-small-23N、Phi-(4, mini) Base與It model 16個範本。
 - 範本: Phi-4 (14B) 與 Qwen-2.5-3B 等2個 GRPO 範本。
+- 以下內容為 示範 微調 ```llama-3.2-1B-it``` 及 ```QWEN-2.5-7B-it``` 兩個模型的過程與結果
 
 ## 下載 hpc_unsloth 套件
 
