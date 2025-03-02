@@ -1,4 +1,4 @@
-# unslot in HPC
+# 具理解力 (Reasoning) 模型微調 in HPC
 - [文件說明](https://hackmd.io/@whYPD8MBSHWRZV6y-ymFwQ/SyZa81nqkl)
 ## 下載 hpc_unsloth 套件
 
