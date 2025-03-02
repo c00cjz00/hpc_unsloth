@@ -121,12 +121,40 @@ sbatch slurm_job/slurm_job/job_llama-3.2-1B-it.slurm
 ```bash=
 bash hpc_cmd/squeue.sh
 ``` 
+> 輸出結果範例
+```bash=
+             JOBID PARTIT                     NAME     USER ST       TIME  NODES NODELIST(REASON)
+            698985   gp4d     mistral-small-24B-it c00cjz00  R   12:38:11      1 gn1009
+            698984   gp4d   mistral-small-24B-base c00cjz00  R   12:38:18      1 gn1009
+            698982   gp4d          llama-3.1-8B-it c00cjz00  R   12:48:49      1 gn1009
+            698978   gp4d        llama-3.1-8B-base c00cjz00  R   12:56:50      1 gn1009
+            698966   gp4d          qwen-2.5-32B-it c00cjz00  R   13:17:34      1 gn1003
+            698965   gp4d        qwen-2.5-32B-base c00cjz00  R   13:17:41      1 gn0308
+            698963   gp4d             phi-4-14B-it c00cjz00  R   13:27:37      1 gn0308
+            698933   gp4d           qwen-2.5-7B-it c00cjz00  R   14:16:27      1 gn0308
+            698930   gp4d         qwen-2.5-7B-base c00cjz00  R   14:23:43      1 gn0308
+```
+
 
 3. 確認運算細節, 請把下方 $JOBID 更換成上方指令輸出的 JOBID 代號
 ```bash=
 tail -f logs/job-$JOBID.err
 tail -f logs/job-$JOBID.our
 ```
+
+> 輸出結果範例
+```bash=
+Loading checkpoint shards: 100%|██████████| 2/2 [00:04<00:00,  2.29s/it]
+Unsloth 2025.2.14 patched 28 layers with 28 QKV layers, 28 O layers and 28 MLP layers.
+Detected kernel version 4.18.0, which is below the recommended minimum of 5.5.0; this can cause the process to hang. It is recommended to upgrade the kernel to the minimum version or higher.
+==((====))==  Unsloth - 2x faster free finetuning | Num GPUs = 1
+   \\   /|    Num examples = 50,000 | Num Epochs = 2
+O^O/ \_/ \    Batch size per device = 8 | Gradient Accumulation steps = 32
+\        /    Total batch size = 256 | Total steps = 390
+ "-____-"     Number of trainable parameters = 40,370,176
+ 67%|██████▋   | 263/390 [14:21:39<6:56:23, 196.72s/it]
+```
+
 
 
 
