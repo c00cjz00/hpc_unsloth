@@ -1,5 +1,6 @@
 # 具理解力 (Reasoning) 模型微調 in HPC
 - [文件說明](https://hackmd.io/@whYPD8MBSHWRZV6y-ymFwQ/SyZa81nqkl)
+- 計算資源需求 1張 V100 (32GB Vram) 即可微調 五萬筆資料, 32B 以下模型 (如qwen-2.5-32B)
 ## 下載 hpc_unsloth 套件
 
 1. 以下以台灣杉T2為範例，先建立目錄並複製套件：
