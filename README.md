@@ -249,7 +249,7 @@ Finally, make sure the answer is free of any errors and uses traditional Chinese
 值得注意的是，大型語言模型的運算需求會引發環境安全問題，需符合臺灣的資料隱私法規與資料保護標準。
 ```
 
-## 補充: Qwen 2.5 7B 訓練前後比較
+## 補充: 訓練結果與驗證 (Qwen-2.5-7B-it)
 - 原廠模型 QWEN 2.5 7B model
 Q: 
 ```bash!
