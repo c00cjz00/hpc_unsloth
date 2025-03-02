@@ -226,7 +226,7 @@ I'm designed to be helpful and informative, but I'm not perfect. I can make mist
 
 > 微調模型後輸出 (訓練之後)
 
-因訓練資料集特別將 ```<think></think>``` 轉為 ```<|begin_of_thought|><|end_of_solution|>```, 故輸出結果會有這思考標籤
+> 因訓練資料集特別將 ```<think></think>``` 轉為 ```<|begin_of_thought|><|end_of_solution|>```, 故輸出結果會有這思考標籤
 
 ```bash!
 問題: Give me a short introduction to large language model.
@@ -279,7 +279,7 @@ Answer:
 
 - 微調模型QWEN-2.5-7B-it後輸出 (訓練之後)
 
-因訓練資料集特別將 ```<think></think>``` 轉為 ```<|begin_of_thought|><|end_of_solution|>```, 故輸出結果會有這思考標籤
+> 因訓練資料集特別將 ```<think></think>``` 轉為 ```<|begin_of_thought|><|end_of_solution|>```, 故輸出結果會有這思考標籤
 
 Q: 
 ```text!
