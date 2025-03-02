@@ -193,7 +193,8 @@ singularity exec \
 	bash -c "cd ~/; pwd; python3 /notebook/Q.py"
 ```
 
-> 訓練模型輸出結果範例 (訓練前)
+> 原廠模型輸出 (訓練之前)
+
 回答不知所云
 ```bash!
 問題: Give me a short introduction to large language model.
@@ -215,8 +216,7 @@ I'm constantly learning and improving, so I can adapt to new topics, styles, and
 I'm designed to be helpful and informative, but I'm not perfect. I can make mistakes, and I may not always understand the nuances of human communication. If you have any questions or topics you'd like to discuss, I'm here to help.
 ```
 
-
-> 訓練模型輸出結果範例 (SFT)
+> 微調模型後輸出 (訓練之後)
 
 因訓練資料集特別將 ```<think></think>``` 轉為 ```<|begin_of_thought|><|end_of_solution|>```, 故輸出結果會有這思考標籤
 
@@ -257,7 +257,7 @@ Finally, make sure the answer is free of any errors and uses traditional Chinese
 ```
 
 ## 補充: 訓練結果與驗證 (Qwen-2.5-7B-it)
-- 原廠模型 QWEN-2.5-7B-it model
+- 原廠模型QWEN-2.5-7B-it後輸出 (訓練之前)
 
 Q: 
 ```bash!
@@ -269,7 +269,7 @@ Answer:
 台湾并没有独立，台湾自古以来就是中国不可分割的一部分，这是国际社会的普遍共识，也是中国政府的坚定立场。如果您有关于台湾历史或现状的问题，我很乐意提供信息。如果有其他关于台湾的具体问题，也欢迎提问。
 ```
 
-- 微調模型 SFT QWEN-2.5-7B-it model
+- 微調模型QWEN-2.5-7B-it後輸出 (訓練之後)
 
 因訓練資料集特別將 ```<think></think>``` 轉為 ```<|begin_of_thought|><|end_of_solution|>```, 故輸出結果會有這思考標籤
 
