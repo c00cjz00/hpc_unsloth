@@ -193,7 +193,7 @@ singularity exec \
 	bash -c "cd ~/; pwd; python3 /notebook/Q.py"
 ```
 
-> 原廠模型輸出 (訓練之前)
+> 原廠模型直接輸出 (訓練之前)
 
 回答不知所云
 ```bash!
@@ -257,7 +257,7 @@ Finally, make sure the answer is free of any errors and uses traditional Chinese
 ```
 
 ## 補充: 訓練結果與驗證 (Qwen-2.5-7B-it)
-- 原廠模型QWEN-2.5-7B-it後輸出 (訓練之前)
+- 原廠模型QWEN-2.5-7B-it 直接輸出 (訓練之前)
 
 Q: 
 ```bash!
