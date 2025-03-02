@@ -1,34 +1,32 @@
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from unsloth import FastLanguageModel
 import os
 
-#model_name = "unsloth/Llama-3.2-1B-Instruct-unsloth-bnb-4bit"
-model_name = f"/home/{os.getenv('USER')}/model"
-model = AutoModelForCausalLM.from_pretrained(
-    model_name,
-    torch_dtype="auto",
-    device_map="auto"
+max_seq_length = 4096  # Choose any! We auto support RoPE Scaling internally!
+dtype = None  # None for auto detection. Float16 for Tesla T4, V100, Bfloat16 for Ampere+
+load_in_4bit = False  # Use 4bit quantization to reduce memory usage. Can be False.
+
+model, tokenizer = FastLanguageModel.from_pretrained(
+    model_name = f"/home/{os.getenv('USER')}/model",
+    max_seq_length = max_seq_length,
+    dtype = dtype,
+    load_in_4bit = load_in_4bit,
+    attn_implementation="default",   
 )
-tokenizer = AutoTokenizer.from_pretrained(model_name)
+FastLanguageModel.for_inference(model)
 
 prompt = "Give me a short introduction to large language model."
 messages = [
     {"role": "system", "content": "You are GENAI, created by NCHC. You are a helpful assistant."},
     {"role": "user", "content": prompt}
 ]
-text = tokenizer.apply_chat_template(
+inputs = tokenizer.apply_chat_template(
     messages,
-    tokenize=False,
-    add_generation_prompt=True
-)
-model_inputs = tokenizer([text], return_tensors="pt").to(model.device)
+    tokenize = True,
+    add_generation_prompt = True, # Must add for generation
+    return_tensors = "pt",
+).to("cuda")
 
-generated_ids = model.generate(
-    **model_inputs,
-    max_new_tokens=4096
-)
-generated_ids = [
-    output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)
-]
+from transformers import TextStreamer
+text_streamer = TextStreamer(tokenizer)
+_ = model.generate(input_ids = inputs, streamer = text_streamer, max_new_tokens = 1024, use_cache = True)
 
-response = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
-print(response)
