@@ -177,7 +177,7 @@ du -sh myhome/home_llama-3.2-1B-it/*
 2.2M    myhome/home_llama-3.2-1B-it/unsloth_compiled_cache 
 ```
 
-2. 驗測訓練結果
+2. 驗測訓練結果 (請自行編修 ```notebook/Q.py``` 內容)
 ```bash=
 myBasedir="/work/$(whoami)/github/hpc_unsloth"
 myHome="myhome/home_llama-3.2-1B-it"
