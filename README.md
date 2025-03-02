@@ -28,6 +28,7 @@ apptainer pull docker://nextboss/unsloth-dev
 打開範例檔案 `slurm_job/job_llama-3.2-1B-it.slurm` 進行編輯，設定作業資源。
 
 1. 修改 slurm job 資源配置，以下以台灣杉T2為範例進行說明：
+基本上只需要修改 ```--account=GOV113021``` 與 ```--mail-user=summerhill001@gmail.com```
 ```bash=
 #SBATCH --job-name=llama-3.2-1B-it  # 設定作業名稱為 "llama-3.2-1B-it"
 #SBATCH --partition=gp4d            # 指定使用 "gp4d" 分區
