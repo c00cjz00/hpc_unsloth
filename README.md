@@ -203,7 +203,8 @@ singularity exec \
 
 > 原廠模型直接輸出 (訓練之前)
 
-回答不知所云
+> 回答不知所云
+
 ```bash!
 問題: Give me a short introduction to large language model.
 
