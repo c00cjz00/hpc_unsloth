@@ -29,7 +29,8 @@ apptainer pull docker://nextboss/unsloth-dev
 
 1. 修改 slurm job 資源配置，以下以台灣杉T2為範例進行說明：
 
-基本上只需要修改 ```--account=GOV113021``` 與 ```--mail-user=summerhill001@gmail.com```
+> 基本上只需要修改 ```--account=GOV113021``` 與 ```--mail-user=summerhill001@gmail.com```
+
 ```bash=
 #SBATCH --job-name=llama-3.2-1B-it  # 設定作業名稱為 "llama-3.2-1B-it"
 #SBATCH --partition=gp4d            # 指定使用 "gp4d" 分區
@@ -46,7 +47,7 @@ apptainer pull docker://nextboss/unsloth-dev
 
 2. 確認執行目錄是否正確。以下以 `hpc_unsloth` 為範例，設定專案所在目錄。
 
-若您使用T2, 以下部分可忽略, 不需要修改
+> 若您使用 T2, 以下部分可忽略, 不需要修改
 ```bash=
 # 建立虛擬專屬目錄
 myBasedir="/work/$(whoami)/github/hpc_unsloth"
