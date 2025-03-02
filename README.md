@@ -16,7 +16,7 @@ cd  /work/$(whoami)/github/hpc_unsloth
 apptainer pull docker://nextboss/unsloth-dev
 ```
 
-## 編修範例 slurm job script
+## 編修範例 slurm job script (llama-3.2-1B-it)
 
 打開範例檔案 `slurm_job/job_llama-3.2-1B-it.slurm` 進行編輯，設定作業資源。
 
@@ -43,7 +43,7 @@ myHome="myhome/home_llama-3.2-1B-it"
 mkdir -p ${myBasedir}/${myHome}
 ```
 
-## 編修範例 python 檔案
+## 編修範例 python 檔案  (llama-3.2-1B-it)
 
 打開範例檔案 `notebook/llama-3.2-1B-it.py` 進行編輯。
 
@@ -110,7 +110,7 @@ if False: model.push_to_hub_merged("hf/model", tokenizer, save_method = "merged_
 ```
 
 
-## 執行訓練
+## 執行訓練  (llama-3.2-1B-it)
 1. 送出 slurm job 
 ```bash=
 cd /work/$(whoami)/github/hpc_unsloth
@@ -156,7 +156,7 @@ O^O/ \_/ \    Batch size per device = 8 | Gradient Accumulation steps = 32
 ```
 
 
-## 訓練結果與驗證
+## 訓練結果與驗證  (llama-3.2-1B-it)
 1. 查看訓練模型輸出結果
 ```bash=
 cd /work/$(whoami)/github/hpc_unsloth
