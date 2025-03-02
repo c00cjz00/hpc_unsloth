@@ -13,7 +13,7 @@ git clone https://github.com/c00cjz00/hpc_unsloth.git
 請確認檔案會存放為 /work/$(whoami)/github/hpc_unsloth/unsloth-dev_latest.sif 
 ```bash=
 cd  /work/$(whoami)/github/hpc_unsloth
-singularity pull docker://nextboss/unsloth-dev
+apptainer pull docker://nextboss/unsloth-dev
 ```
 
 ## 編修範例 slurm job script
