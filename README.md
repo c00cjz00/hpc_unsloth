@@ -251,7 +251,7 @@ Finally, make sure the answer is free of any errors and uses traditional Chinese
 
 ## 補充: 訓練結果與驗證 (Qwen-2.5-7B-it)
 - 原廠模型 QWEN 2.5 7B model
-- 
+
 Q: 
 ```bash!
 台灣哪時間點獨立的?
@@ -263,7 +263,7 @@ Answer:
 ```
 
 - 微調模型 SFT QWEN 2.5 7B model
-- 
+
 Q: 
 ```text!
 台灣哪時間點獨立的?
