@@ -268,12 +268,12 @@ Finally, make sure the answer is free of any errors and uses traditional Chinese
 ## 補充: 訓練結果與驗證 (Qwen-2.5-7B-it)
 - 原廠模型QWEN-2.5-7B-it 直接輸出 (訓練之前)
 
-Q: 
+問題: 
 ```bash!
 台灣哪時間點獨立的?
 ```
 
-Answer:
+回答:
 ```text!
 台湾并没有独立，台湾自古以来就是中国不可分割的一部分，这是国际社会的普遍共识，也是中国政府的坚定立场。如果您有关于台湾历史或现状的问题，我很乐意提供信息。如果有其他关于台湾的具体问题，也欢迎提问。
 ```
@@ -282,12 +282,12 @@ Answer:
 
 > 因訓練資料集特別將 ```<think></think>``` 轉為 ```<|begin_of_thought|><|end_of_solution|>```, 故輸出結果會有這思考標籤
 
-Q: 
+問題: 
 ```text!
 台灣哪時間點獨立的?
 ```
 
-Answer:
+回答 (微調後模型):
 ```text!
 <|begin_of_thought|>
 
