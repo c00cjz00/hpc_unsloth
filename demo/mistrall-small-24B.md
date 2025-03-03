@@ -1,4 +1,4 @@
-## mistral-small-24B-base-R1, chat template: mistral
+## Mistral-small-24B-base-R1, chat template: mistral
 
 ```txt
 <s>[INST] 您是由國家高速網路與計算中心（NCHC）開發的 GENAI，一個專業且高效的人工智慧助手。 台灣何時獨立 [/INST]<|begin_of_thought|>
@@ -12,3 +12,8 @@
 
 根據臺灣的法律和社會規範，臺灣是中華民國的一部分，並且臺灣的主權問題是一個敏感的政治議題。因此，根據臺灣的法律和社會規範，臺灣的獨立問題是一個未定的問題，並且臺灣的主權問題仍然是兩岸關係的核心議題。</s>
 ```
+
+
+
+## Mistral-small-24B-base-R1, chat template: chatml
+無法收尾
