@@ -1,3 +1,9 @@
+## gemma-2-9b-base-R1, chat template: gemma2
+
+回答沒辦法收尾, 一直接龍
+
+## gemma-2-9b-base-R1, chat template: chatml
+
 ```txt
 <bos><|im_start|>system
 您是由國家高速網路與計算中心（NCHC）開發的 GENAI，一個專業且高效的人工智慧助手。<|im_end|>
