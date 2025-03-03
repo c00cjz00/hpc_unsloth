@@ -300,3 +300,59 @@ Finally, make sure the answer is free of any errors and uses traditional Chinese
 
 根據國際法及歷史事實，臺灣自1945年第二次世界大戰結束後，由中華民國政府接收治理。1949年中華民國政府遷至臺灣地區後，臺灣地區一直維持中華民國政府的管轄。此過程涉及歷史變遷與政治認同，需以客觀事實呈現。
 ```
+
+
+## 補充 inference
+1. 微調模型為base model時候, 因使用的 ```chat template``` 格式為 ```alpaca``` 故進行 ```Inference``` 時候, 請使用 ```notebook/Q_alpaca.py```
+
+```bash=
+myBasedir="/work/$(whoami)/github/hpc_unsloth"
+myHome="myhome/home_llama-3.2-1B-base"
+mkdir -p ${myBasedir}/${myHome}
+
+singularity exec \
+	--nv \
+	--no-home \
+	-B /work \
+	-B ${myBasedir}/notebook:/notebook \
+	-B ${myBasedir}/${myHome}:$HOME \
+	${myBasedir}/unsloth-dev_latest.sif \
+	bash -c "cd ~/; pwd; python3 /notebook/Q_alpaca.py"
+```
+
+2. 微調模型為it model時候, 因內自帶 ```chat template```， 故進行 ```Inference``` 時候， 請使用 ```notebook/Q_conversational.py```
+
+```bash=
+myBasedir="/work/$(whoami)/github/hpc_unsloth"
+myHome="myhome/home_llama-3.2-1B-base"
+mkdir -p ${myBasedir}/${myHome}
+
+singularity exec \
+	--nv \
+	--no-home \
+	-B /work \
+	-B ${myBasedir}/notebook:/notebook \
+	-B ${myBasedir}/${myHome}:$HOME \
+	${myBasedir}/unsloth-dev_latest.sif \
+	bash -c "cd ~/; pwd; python3 /notebook/Q_conversational.py"
+```
+
+
+3. 需自行變更 ```chat template``` 版本， 請修改 ```notebook/Q_chatTemplate.py``` 內的 ```chat_template = "alpaca"``` 版本代號
+
+```bash=
+myBasedir="/work/$(whoami)/github/hpc_unsloth"
+myHome="myhome/home_llama-3.2-1B-base"
+mkdir -p ${myBasedir}/${myHome}
+
+singularity exec \
+	--nv \
+	--no-home \
+	-B /work \
+	-B ${myBasedir}/notebook:/notebook \
+	-B ${myBasedir}/${myHome}:$HOME \
+	${myBasedir}/unsloth-dev_latest.sif \
+	bash -c "cd ~/; pwd; python3 /notebook/Q_chatTemplate.py"
+```
+
+
