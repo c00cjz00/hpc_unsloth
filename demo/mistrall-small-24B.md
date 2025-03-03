@@ -16,4 +16,7 @@
 
 
 ## Mistral-small-24B-base-R1, chat template: chatml
-無法收尾
+
+回答沒辦法收尾, 一直接龍
+
+
