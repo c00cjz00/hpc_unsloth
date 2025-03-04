@@ -1,8 +1,8 @@
-## gemma-2-9B-base-R1, chat template: gemma2
+## Gemma-2-9B-base-R1, chat template: gemma2
 
 回答沒辦法收尾, 一直接龍
 
-## gemma-2-9B-base-R1, chat template: chatml
+## Gemma-2-9B-base-R1, chat template: chatml
 
 ```txt
 <bos><|im_start|>system
