@@ -1,3 +1,9 @@
+## llama-3.2-1B-base-R1, chat template: gemma2
+
+回答沒辦法收尾, 一直接龍
+
+## llama-3.2-1B-base-R1, chat template: chatml
+
 ```
 <|im_start|>user
 台灣何時獨立<|im_end|>
