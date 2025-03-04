@@ -68,7 +68,8 @@ from unsloth.chat_templates import get_chat_template
 tokenizer = get_chat_template(
     tokenizer,
     chat_template = "qwen-2.5", # Supports llama3, llama-3.1, phi-3, phi-3.5, phi-4, qwen-2.5, gemma, gemma, zephyr, chatml, mistral, llama, alpaca, unsloth
-    #mapping = {"role" : "from", "content" : "value", "user" : "human", "assistant" : "gpt"}, # ShareGPT style
+    mapping = {"role" : "from", "content" : "value", "user" : "human", "assistant" : "gpt"}, # ShareGPT style
+    map_eos_token = True, # Maps <|im_end|> to </s> instead
 )
 
 def formatting_prompts_func(examples):
@@ -107,7 +108,7 @@ to
 from datasets import load_dataset
 dataset = load_dataset("c00cjz00/demo2", split = "train")
 #dataset = load_dataset("philschmid/guanaco-sharegpt-style", split = "train")
-#dataset = dataset.select(range(100))
+dataset = dataset.select(range(5000))
 
 # 原本資料 c00cjz00/demo2 就符合規定格式, 若你的資料為shareGPT格式, 請將以下兩行 # 移除
 #from unsloth.chat_templates import standardize_sharegpt

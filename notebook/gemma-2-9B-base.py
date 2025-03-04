@@ -75,6 +75,7 @@ pass
 from datasets import load_dataset
 dataset = load_dataset("c00cjz00/demo", split = "train")
 dataset = dataset.map(formatting_prompts_func, batched = True,)
+dataset = dataset.select(range(5000))
 
 print(dataset[5]["text"])
 
@@ -97,7 +98,7 @@ trainer = SFTTrainer(
     dataset_num_proc = 4,
     packing = False, # Can make training 5x faster for short sequences.
     args = TrainingArguments(
-        per_device_train_batch_size = 1,
+        per_device_train_batch_size = 2,
         gradient_accumulation_steps = 4,
         warmup_steps = 5,
         num_train_epochs = 1, # Set this for 1 full training run.

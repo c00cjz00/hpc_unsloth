@@ -1,28 +1,35 @@
 # -*- coding: utf-8 -*-
-"""unsloth + Mistral Conversational"""
+"""unsloth + Llama-3.2 Conversational"""
 
 """### Unsloth"""
 
-from unsloth import FastLanguageModel  # FastVisionModel for LLMs
+from unsloth import FastLanguageModel
 import torch
-max_seq_length = 8192  # Choose any! We auto support RoPE Scaling internally!
+max_seq_length = 8192 # Choose any! We auto support RoPE Scaling internally!
 dtype = None # None for auto detection. Float16 for Tesla T4, V100, Bfloat16 for Ampere+
-load_in_4bit = True  # Use 4bit quantization to reduce memory usage. Can be False.
+load_in_4bit = True # Use 4bit quantization to reduce memory usage. Can be False.
 
 # 4bit pre quantized models we support for 4x faster downloading + no OOMs.
 fourbit_models = [
-    "unsloth/mistral-7b-bnb-4bit",
-    "unsloth/mistral-7b-instruct-v0.2-bnb-4bit",
-    "unsloth/llama-2-7b-bnb-4bit",
-    "unsloth/llama-2-13b-bnb-4bit",
-    "unsloth/codellama-34b-bnb-4bit",
-    "unsloth/tinyllama-bnb-4bit",
-    "unsloth/gemma-7b-bnb-4bit", # New Google 6 trillion tokens model 2.5x faster!
-    "unsloth/gemma-2b-bnb-4bit",
+    "unsloth/Meta-Llama-3.1-8B-bnb-4bit",      # Llama-3.1 2x faster
+    "unsloth/Meta-Llama-3.1-8B-Instruct-bnb-4bit",
+    "unsloth/Meta-Llama-3.1-70B-bnb-4bit",
+    "unsloth/Meta-Llama-3.1-405B-bnb-4bit",    # 4bit for 405b!
+    "unsloth/Mistral-Small-Instruct-2409",     # Mistral 22b 2x faster!
+    "unsloth/mistral-7b-instruct-v0.3-bnb-4bit",
+    "unsloth/Phi-3.5-mini-instruct",           # Phi-3.5 2x faster!
+    "unsloth/Phi-3-medium-4k-instruct",
+    "unsloth/gemma-2-9b-bnb-4bit",
+    "unsloth/gemma-2-27b-bnb-4bit",            # Gemma 2x faster!
+    "unsloth/Llama-3.2-1B-bnb-4bit",           # NEW! Llama 3.2 models
+    "unsloth/Llama-3.2-1B-Instruct-bnb-4bit",
+    "unsloth/Llama-3.2-3B-bnb-4bit",
+    "unsloth/Llama-3.2-3B-Instruct-bnb-4bit",
+    "unsloth/Llama-3.3-70B-Instruct-bnb-4bit" # NEW! Llama 3.3 70B!
 ] # More models at https://huggingface.co/unsloth
 
 model, tokenizer = FastLanguageModel.from_pretrained(
-    model_name = "unsloth/Mistral-Small-24B-Base-2501-unsloth-bnb-4bit",
+    model_name = "unsloth/Llama-3.2-1B-unsloth-bnb-4bit", # or choose "unsloth/Llama-3.2-1B-Instruct"
     max_seq_length = max_seq_length,
     dtype = dtype,
     load_in_4bit = load_in_4bit,
@@ -46,14 +53,13 @@ model = FastLanguageModel.get_peft_model(
     loftq_config = None, # And LoftQ
 )
 
-"""`Mistral` format 
+
+"""`Llama-3.1` format 
 ```
-<|im_start|>system
-You are a helpful assistant.<|im_end|>
-<|im_start|>user
-What's the capital of France?<|im_end|>
-<|im_start|>assistant
-Paris.<|im_end|>
+<|begin_of_text|>
+<|start_header_id|>user<|end_header_id|>Hello!<|eot_id|>
+<|start_header_id|>assistant<|end_header_id|>Hey there! How are you?<|eot_id|>
+<|start_header_id|>user<|end_header_id|>I'm great thanks!<|eot_id|>
 ```
 """
 
@@ -62,9 +68,10 @@ from unsloth.chat_templates import get_chat_template
 tokenizer = get_chat_template(
     tokenizer,
     chat_template = "chatml", # Supports zephyr, chatml, mistral, llama, alpaca, vicuna, vicuna_old, unsloth
-    #mapping = {"role" : "from", "content" : "value", "user" : "human", "assistant" : "gpt"}, # ShareGPT style
+    mapping = {"role" : "from", "content" : "value", "user" : "human", "assistant" : "gpt"}, # ShareGPT style
     map_eos_token = True, # Maps <|im_end|> to </s> instead
 )
+
 def formatting_prompts_func(examples):
     convos = examples["messages"]
     texts = [tokenizer.apply_chat_template(convo, tokenize = False, add_generation_prompt = False) for convo in convos]
@@ -83,6 +90,8 @@ def formatting_prompts_func_with_system_prompt(examples):
     texts = [tokenizer.apply_chat_template(convo, tokenize=False, add_generation_prompt=False) for convo in convos]
     return {"text": texts}
 
+
+
 """We now use `standardize_sharegpt` to convert ShareGPT style datasets into HuggingFace's generic format. This changes the dataset from looking like:
 ```
 {"from": "system", "value": "You are an assistant"}
@@ -100,7 +109,7 @@ to
 from datasets import load_dataset
 dataset = load_dataset("c00cjz00/demo2", split = "train")
 #dataset = load_dataset("philschmid/guanaco-sharegpt-style", split = "train")
-#dataset = dataset.select(range(100))
+dataset = dataset.select(range(5000))
 
 # 原本資料 c00cjz00/demo2 就符合規定格式, 若你的資料為shareGPT格式, 請將以下兩行 # 移除
 #from unsloth.chat_templates import standardize_sharegpt
@@ -109,7 +118,6 @@ dataset = load_dataset("c00cjz00/demo2", split = "train")
 # 自定 system prompt
 dataset = dataset.map(formatting_prompts_func, batched = True,)
 #dataset = dataset.map(formatting_prompts_func_with_system_prompt, batched = True,)
-
 
 print(dataset[5]["messages"])
 print("-----------------")
@@ -133,7 +141,7 @@ trainer = SFTTrainer(
         gradient_accumulation_steps = 32,
         warmup_steps = 5,
         num_train_epochs = 1, # Set this for 1 full training run.
-        #max_steps = 60,
+        #max_steps = 10,
         learning_rate = 2e-4,
         fp16 = not is_bfloat16_supported(),
         bf16 = is_bfloat16_supported(),
@@ -150,11 +158,10 @@ trainer = SFTTrainer(
 """We also use Unsloth's `train_on_completions` method to only train on the assistant outputs and ignore the loss on the user's inputs."""
 
 from unsloth.chat_templates import train_on_responses_only
-
 trainer = train_on_responses_only(
     trainer,
-    instruction_part="<|im_start|>user",
-    response_part="<|im_start|>assistant",
+    instruction_part = "<|im_start|>user\n",
+    response_part = "<|im_start|>assistant\n",
 )
 
 """We verify masking is actually done:"""
@@ -165,7 +172,6 @@ print("-----------------------")
 space = tokenizer(" ", add_special_tokens = False).input_ids[0]
 print(tokenizer.decode([space if x == -100 else x for x in trainer.train_dataset[5]["labels"]]))
 """We can see the System and Instruction prompts are successfully masked!"""
-
 
 trainer_stats = trainer.train()
 

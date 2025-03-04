@@ -60,6 +60,8 @@ from unsloth.chat_templates import get_chat_template
 tokenizer = get_chat_template(
     tokenizer,
     chat_template = "phi-4",
+    mapping = {"role" : "from", "content" : "value", "user" : "human", "assistant" : "gpt"}, # ShareGPT style
+    map_eos_token = True, # Maps <|im_end|> to </s> instead    
 )
 
 def formatting_prompts_func(examples):
@@ -97,7 +99,7 @@ to
 from datasets import load_dataset
 dataset = load_dataset("c00cjz00/demo2", split = "train")
 #dataset = load_dataset("philschmid/guanaco-sharegpt-style", split = "train")
-#dataset = dataset.select(range(100))
+dataset = dataset.select(range(5000))
 
 # 原本資料 c00cjz00/demo2 就符合規定格式, 若你的資料為shareGPT格式, 請將以下兩行 # 移除
 #from unsloth.chat_templates import standardize_sharegpt
@@ -126,10 +128,10 @@ trainer = SFTTrainer(
     dataset_num_proc = 4,
     packing = False, # Can make training 5x faster for short sequences.
     args = TrainingArguments(
-        per_device_train_batch_size = 8,
+        per_device_train_batch_size = 4,
         gradient_accumulation_steps = 32,
         warmup_steps = 5,
-        num_train_epochs = 2, # Set this for 1 full training run.
+        num_train_epochs = 1, # Set this for 1 full training run.
         #max_steps = 60,
         learning_rate = 2e-4,
         fp16 = not is_bfloat16_supported(),

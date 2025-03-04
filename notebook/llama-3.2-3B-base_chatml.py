@@ -29,7 +29,7 @@ fourbit_models = [
 ] # More models at https://huggingface.co/unsloth
 
 model, tokenizer = FastLanguageModel.from_pretrained(
-    model_name = "unsloth/Llama-3.2-3B-unsloth-bnb-4bit", # or choose "unsloth/Llama-3.2-1B-Instruct"
+    model_name = "unsloth/Llama-3.2-1B-unsloth-bnb-4bit", # or choose "unsloth/Llama-3.2-1B-Instruct"
     max_seq_length = max_seq_length,
     dtype = dtype,
     load_in_4bit = load_in_4bit,
@@ -53,6 +53,7 @@ model = FastLanguageModel.get_peft_model(
     loftq_config = None, # And LoftQ
 )
 
+
 """`Llama-3.1` format 
 ```
 <|begin_of_text|>
@@ -66,7 +67,9 @@ from unsloth.chat_templates import get_chat_template
 
 tokenizer = get_chat_template(
     tokenizer,
-    chat_template = "llama-3.1",
+    chat_template = "chatml", # Supports zephyr, chatml, mistral, llama, alpaca, vicuna, vicuna_old, unsloth
+    mapping = {"role" : "from", "content" : "value", "user" : "human", "assistant" : "gpt"}, # ShareGPT style
+    map_eos_token = True, # Maps <|im_end|> to </s> instead
 )
 
 def formatting_prompts_func(examples):
@@ -87,26 +90,6 @@ def formatting_prompts_func_with_system_prompt(examples):
     texts = [tokenizer.apply_chat_template(convo, tokenize=False, add_generation_prompt=False) for convo in convos]
     return {"text": texts}
 
-def formatting_prompts_func_with_system_prompt_old(examples):
-    new_system_message = "您是由國家高速網路與計算中心（NCHC）開發的 GENAI，一個專業且高效的人工智慧助手。"
-    convos = []
-    for convo in examples["messages"]:
-        # 檢查是否已經存在 'system' 提示並替換
-        system_found = False
-        for i, msg in enumerate(convo):
-            if msg.get("role") == "system":
-                convo[i] = {"role": "system", "content": new_system_message}  # 替換現有的 system 提示
-                system_found = True
-                break
-        if not system_found:
-            # 如果沒有找到 'system' 提示，則新增
-            convo.insert(0, {"role": "system", "content": new_system_message})
-        convos.append(convo)
-    
-    texts = [tokenizer.apply_chat_template(convo, tokenize=False, add_generation_prompt=False) for convo in convos]
-    return {"text": texts}
-
-
 
 """We now use `standardize_sharegpt` to convert ShareGPT style datasets into HuggingFace's generic format. This changes the dataset from looking like:
 ```
@@ -125,7 +108,7 @@ to
 from datasets import load_dataset
 dataset = load_dataset("c00cjz00/demo2", split = "train")
 #dataset = load_dataset("philschmid/guanaco-sharegpt-style", split = "train")
-#dataset = dataset.select(range(100))
+dataset = dataset.select(range(5000))
 
 # 原本資料 c00cjz00/demo2 就符合規定格式, 若你的資料為shareGPT格式, 請將以下兩行 # 移除
 #from unsloth.chat_templates import standardize_sharegpt
@@ -153,11 +136,11 @@ trainer = SFTTrainer(
     dataset_num_proc = 4,
     packing = False, # Can make training 5x faster for short sequences.
     args = TrainingArguments(
-        per_device_train_batch_size = 8,
+        per_device_train_batch_size = 4,
         gradient_accumulation_steps = 32,
         warmup_steps = 5,
-        num_train_epochs = 2, # Set this for 1 full training run.
-        #max_steps = 60,
+        num_train_epochs = 1, # Set this for 1 full training run.
+        #max_steps = 10,
         learning_rate = 2e-4,
         fp16 = not is_bfloat16_supported(),
         bf16 = is_bfloat16_supported(),
@@ -176,8 +159,8 @@ trainer = SFTTrainer(
 from unsloth.chat_templates import train_on_responses_only
 trainer = train_on_responses_only(
     trainer,
-    instruction_part = "<|start_header_id|>user<|end_header_id|>\n\n",
-    response_part = "<|start_header_id|>assistant<|end_header_id|>\n\n",
+    instruction_part = "<|im_start|>user\n",
+    response_part = "<|im_start|>assistant\n",
 )
 
 """We verify masking is actually done:"""

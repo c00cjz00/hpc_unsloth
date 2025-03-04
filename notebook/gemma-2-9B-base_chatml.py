@@ -1,37 +1,36 @@
 # -*- coding: utf-8 -*-
-"""unsloth + Qwen 2.5 Conversational"""
+"""unsloth + Gemma 2 Conversational"""
 
 from unsloth import FastLanguageModel
 import torch
-max_seq_length = 8192 # Choose any! We auto support RoPE Scaling internally!
-dtype = None # None for auto detection. Float16 for Tesla T4, V100, Bfloat16 for Ampere+
-load_in_4bit = True # Use 4bit quantization to reduce memory usage. Can be False.
+
+max_seq_length = 8192  # Choose any! We auto support RoPE Scaling internally!
+dtype = (
+    None  # None for auto detection. Float16 for Tesla T4, V100, Bfloat16 for Ampere+
+)
+load_in_4bit = True  # Use 4bit quantization to reduce memory usage. Can be False.
 
 # 4bit pre quantized models we support for 4x faster downloading + no OOMs.
 fourbit_models = [
-    "unsloth/Meta-Llama-3.1-8B-bnb-4bit",      # Llama-3.1 15 trillion tokens model 2x faster!
+    "unsloth/Meta-Llama-3.1-8B-bnb-4bit",  # Llama-3.1 15 trillion tokens model 2x faster!
     "unsloth/Meta-Llama-3.1-8B-Instruct-bnb-4bit",
     "unsloth/Meta-Llama-3.1-70B-bnb-4bit",
-    "unsloth/Meta-Llama-3.1-405B-bnb-4bit",    # We also uploaded 4bit for 405b!
-    "unsloth/Mistral-Nemo-Base-2407-bnb-4bit", # New Mistral 12b 2x faster!
+    "unsloth/Meta-Llama-3.1-405B-bnb-4bit",  # We also uploaded 4bit for 405b!
+    "unsloth/Mistral-Nemo-Base-2407-bnb-4bit",  # New Mistral 12b 2x faster!
     "unsloth/Mistral-Nemo-Instruct-2407-bnb-4bit",
-    "unsloth/mistral-7b-v0.3-bnb-4bit",        # Mistral v3 2x faster!
+    "unsloth/mistral-7b-v0.3-bnb-4bit",  # Mistral v3 2x faster!
     "unsloth/mistral-7b-instruct-v0.3-bnb-4bit",
-    "unsloth/Phi-3.5-mini-instruct",           # Phi-3.5 2x faster!
+    "unsloth/Phi-3.5-mini-instruct",  # Phi-3.5 2x faster!
     "unsloth/Phi-3-medium-4k-instruct",
     "unsloth/gemma-2-9b-bnb-4bit",
-    "unsloth/gemma-2-27b-bnb-4bit",            # Gemma 2x faster!
-] # More models at https://huggingface.co/unsloth
+    "unsloth/gemma-2-27b-bnb-4bit",  # Gemma 2x faster!
+]  # More models at https://huggingface.co/unsloth
 
 model, tokenizer = FastLanguageModel.from_pretrained(
-    # Can select any from the below:
-    # "unsloth/Qwen2.5-0.5B", "unsloth/Qwen2.5-1.5B", "unsloth/Qwen2.5-3B"
-    # "unsloth/Qwen2.5-14B",  "unsloth/Qwen2.5-32B",  "unsloth/Qwen2.5-72B",
-    # And also all Instruct versions and Math. Coding verisons!
-    model_name = "unsloth/Qwen2.5-7B-unsloth-bnb-4bit",
-    max_seq_length = max_seq_length,
-    dtype = dtype,
-    load_in_4bit = load_in_4bit,
+    model_name="unsloth/gemma-2-9b-bnb-4bit",
+    max_seq_length=max_seq_length,
+    dtype=dtype,
+    load_in_4bit=load_in_4bit,
     # token = "hf_...", # use one if using gated models like meta-llama/Llama-2-7b-hf
 )
 
@@ -52,14 +51,14 @@ model = FastLanguageModel.get_peft_model(
     loftq_config = None, # And LoftQ
 )
 
-"""`Qwen-2.5` format 
+"""`gemma2` format 
 ```
-<|im_start|>system
-You are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>
-<|im_start|>user
-Hello!<|im_end|>
-<|im_start|>assistant
-Hey there! How are you?<|im_end|>
+<|begin_of_text|><start_of_turn>user
+設計一組具有創意的便當盒樣式？
+<end_of_turn>
+<start_of_turn>model
+好，我需要設計一個有創意的便當盒樣式，並且要符合臺灣的市場需求和文化特色。
+<end_of_turn>
 ```
 """
 
@@ -67,8 +66,9 @@ from unsloth.chat_templates import get_chat_template
 
 tokenizer = get_chat_template(
     tokenizer,
-    chat_template = "qwen-2.5", # Supports llama3, llama-3.1, phi-3, phi-3.5, phi-4, qwen-2.5, gemma, gemma, zephyr, chatml, mistral, llama, alpaca, unsloth
-    #mapping = {"role" : "from", "content" : "value", "user" : "human", "assistant" : "gpt"}, # ShareGPT style
+    chat_template = "chatml", # Supports zephyr, chatml, mistral, llama, alpaca, vicuna, vicuna_old, unsloth
+    mapping = {"role" : "from", "content" : "value", "user" : "human", "assistant" : "gpt"}, # ShareGPT style
+    map_eos_token = True, # Maps <|im_end|> to </s> instead
 )
 
 def formatting_prompts_func(examples):
@@ -107,15 +107,15 @@ to
 from datasets import load_dataset
 dataset = load_dataset("c00cjz00/demo2", split = "train")
 #dataset = load_dataset("philschmid/guanaco-sharegpt-style", split = "train")
-#dataset = dataset.select(range(100))
+dataset = dataset.select(range(5000))
 
 # 原本資料 c00cjz00/demo2 就符合規定格式, 若你的資料為shareGPT格式, 請將以下兩行 # 移除
 #from unsloth.chat_templates import standardize_sharegpt
 #dataset = standardize_sharegpt(dataset)
 
 # 自定 system prompt
-#dataset = dataset.map(formatting_prompts_func, batched = True,)
-dataset = dataset.map(formatting_prompts_func_with_system_prompt, batched = True,)
+dataset = dataset.map(formatting_prompts_func, batched = True,)
+#dataset = dataset.map(formatting_prompts_func_with_system_prompt, batched = True,)
 
 print(dataset[5]["messages"])
 print("-----------------")
@@ -137,11 +137,11 @@ trainer = SFTTrainer(
     dataset_num_proc = 4,
     packing = False, # Can make training 5x faster for short sequences.
     args = TrainingArguments(
-        per_device_train_batch_size = 8,
+        per_device_train_batch_size = 4,
         gradient_accumulation_steps = 32,
         warmup_steps = 5,
-        num_train_epochs = 2, # Set this for 1 full training run.
-        #max_steps = 60,
+        #num_train_epochs = 2, # Set this for 1 full training run.
+        max_steps = 10,
         learning_rate = 2e-4,
         fp16 = not is_bfloat16_supported(),
         bf16 = is_bfloat16_supported(),
@@ -159,8 +159,8 @@ trainer = SFTTrainer(
 from unsloth.chat_templates import train_on_responses_only
 trainer = train_on_responses_only(
     trainer,
-    instruction_part = "<|im_start|>user\n",
-    response_part = "<|im_start|>assistant\n",
+    instruction_part="<|im_start|>user",
+    response_part="<|im_start|>assistant",
 )
 print("-----------------------")
 print(tokenizer.decode(trainer.train_dataset[5]["input_ids"]))
