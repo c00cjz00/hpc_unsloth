@@ -15,7 +15,7 @@ def convert_to_sharegpt_format(example):
     
     conversations = [
         {"value": question, "from": "human"},
-        {"value": f"<think>{reasoning}</think>{response}", "from": "gpt"}
+        {"value": f"<think>\n\n{reasoning}\n</think>\n\n{response}", "from": "gpt"}
     ]
     
     return {"conversations": conversations}
@@ -23,7 +23,7 @@ def convert_to_sharegpt_format(example):
 # 2. 转换数据
 dataset = dataset.map(convert_to_sharegpt_format)
 
-dataset = dataset.remove_columns(["question", "reasoning (reasoning_content)", "response (content)"])  # 移除原始列
+#dataset = dataset.remove_columns(["question", "reasoning (reasoning_content)", "response (content)"])  # 移除原始列
 
 dataset = DatasetDict({"train": dataset["train"]})  # 确保数据集格式
 
